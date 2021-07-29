@@ -9,12 +9,13 @@ def main():
     # read configs
     with open("buildingconfig.json", "r") as f:
         config = json.load(f)
+    
+    apicomm = api_communicator.Api_communicator(config)
 
     while True:
-
-            api_json = api_communicator.read_livedata(check_interval)
-            api_communicator.write_livedata_to_influx(api_json)
-            pi_data = api_communicator.read_most_recent_pi_data()
+            api_json = apicomm.read_livedata(check_interval)
+            apicomm.write_livedata_to_influx(api_json)
+            pi_data = apicomm.read_most_recent_pi_data()
             outside_pi_key = config["pi_locations"].get("outside")
             if outside_pi_key:
                 outside_pi = pi_data.get(outside_pi_key)
@@ -32,8 +33,6 @@ def main():
                 room_pi = None
                 if room_pi_key:
                     room_pi = pi_data.get(room_pi_key)
-                print(f"call checks with bd:{building_data}, rd:{roomdata}, op:{outside_pi}, rp:{room_pi}, pt: {pref_temp}")
-                pass
 
 if __name__ == '__main__':
     main()

@@ -1,5 +1,11 @@
 {	
 	"default_preferred_temperature": 20.0,
+	"basepoint": "https://rvj6rnbpxj.execute-api.eu-central-1.amazonaws.com/prod/",
+	"token": "TCMe2_x68tFNRIjVqcvE56aMhy0u5X5y_UY-6ejXpc3-UvCVGg5Yy_NOjjoi8vOu5wy64EQM1t8x-fKGx-I6_Q==",
+	"org": "org_dj",
+	"bucket": "environment_monitoring",
+	"influxdb_url": "http://85.214.63.110:8086",
+
 	"preferred_temperature": 
 	{
 		"A":20.0,
