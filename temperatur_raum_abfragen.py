@@ -6,32 +6,32 @@ messwerte_Building = {
     "totalPowerConsumption": 15.49,
     "powerConsumptionDataCenter": 14.78,
     "solarPowerOutput": 16.13,
-    "outdoorTemperature": 1.37,
+    "outdoorTemperature": 25,
     "waterConsumption": 40.13,
     "totalEmployeesIn": 24
     }
 
 # ein Beispielraum
 messwerte_room_sensors = {
-        "lightOn": false,
-        "windowsOpen": false,
-        "rollerBlindsClosed": false,
-        "airConditioningRunning": false,
-        "heaterRunning": true,
+        "lightOn": False,
+        "windowsOpen": False,
+        "rollerBlindsClosed": False,
+        "airConditioningRunning": False,
+        "heaterRunning": True,
         "temperature": 20.369021225136912,
         "powerConsumption": 0.02785408418197808
 
     }
 
 messwerte_room_pi = {
-    "TVOC" = 0,
-    "eCO2" = 0,
-    "humidity" = 0,
-    "temperature" = 0
+    "TVOC" : 0,
+    "eCO2" : 0,
+    "humidity" : 0,
+    "temperature" : 0
     }
 
 #Temperatur, die im Raum angestrebt wird
-room_temperature_want = 20.0
+room_temperature_want = 30.0
 
 #check if temperature too high or low
 def check_temperature(temperature, room_temperature_want, temperature_difference, outdoor_temperature, window_open):
@@ -44,8 +44,9 @@ def check_temperature(temperature, room_temperature_want, temperature_difference
             if window_open == False:
                 send_open_window()
         
-        #else:
+        else:
             #send_run_air_conditioning()
+            print("run air cond")
     
     #check if room temperature too low
     elif temperature < (room_temperature_want + temperature_difference):
@@ -54,12 +55,11 @@ def check_temperature(temperature, room_temperature_want, temperature_difference
             if window_open == False:
                 send_open_window()
         
-        #else:
+        else:
            #send_run_heating()
-
+            print("run heating")
 
 def send_open_window():
-    #TODO
     print("Bitte öffnen Sie das Fenster.")
 
 
@@ -85,3 +85,10 @@ def run_temperature_check():
 
     check_temperature(temperature, room_temperature_want, temperature_difference, outdoor_temperature, window_open)
 
+
+def main():
+    run_temperature_check()
+
+if __name__ == "__main__":
+    # execute only if run as a script
+    main()
