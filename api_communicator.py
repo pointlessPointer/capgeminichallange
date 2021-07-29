@@ -43,6 +43,8 @@ def write_livedata_to_influx(api_json):
         write_api.write(bucket, org, room_point)
 
 
+
+
 if __name__ == '__main__':
     while True:
         write_livedata_to_influx(read_livedata(interval=2))
