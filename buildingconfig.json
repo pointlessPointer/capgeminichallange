@@ -1,5 +1,13 @@
-{	
-	"default_preferred_temperature": 20.0,
+{
+	"tempDiff": 2,
+	"CO2_want": 300,
+	"CO2_warn": 1400,
+	"humidity_want": 50,
+	"VOC_want": 150,
+	"VOC_danger": 1300,
+
+
+	"default_preferred_temperature": -5,
 	"basepoint": "https://rvj6rnbpxj.execute-api.eu-central-1.amazonaws.com/prod/",
 	"token": "TCMe2_x68tFNRIjVqcvE56aMhy0u5X5y_UY-6ejXpc3-UvCVGg5Yy_NOjjoi8vOu5wy64EQM1t8x-fKGx-I6_Q==",
 	"org": "org_dj",

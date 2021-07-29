@@ -41,7 +41,7 @@ class RoomCheck:
 
     def send_temperature_indoor_alarm(self):
         print("Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.")
-        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude."),timestamp=datetime.datetime.now())
+        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
         self.NotificationWatcher.set_notification(temperature_indoor_notification)
 
     ################################################################
