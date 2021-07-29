@@ -41,7 +41,7 @@ class RoomCheck:
 
     def send_temperature_indoor_alarm(self):
         print("Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.")
-        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude."),timestamp=datetime.datetime.now())
+        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
         self.NotificationWatcher.set_notification(temperature_indoor_notification)
 
     ################################################################
@@ -88,7 +88,7 @@ class RoomCheck:
 
     #Ziel sollte sein, einen CO2-Wert von 1.000 ppm nicht zu überschreiten. 1.400 ppm ist die obere Grenze für akzeptable Raumluft.
 
-    def run_CO2(self, messwerte_indoor_pi):
+    def run_CO2(self, messwerte_indoor_pi, room_id="all in room"):
 
         CO2_indoor_notification = notification.Notification("ALARM", "all", "Sehr hoher CO2-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
         
@@ -99,7 +99,7 @@ class RoomCheck:
         else:
             self.NotificationWatcher.reset_notification(CO2_indoor_notification)
 
-        window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Der CO2-Wert ist hoch)",timestamp=datetime.datetime.now())
+        window_notification = notification.Notification("SUGGESTION", room_id, "Bitte öffnen Sie das Fenster. (Der CO2-Wert ist hoch)",timestamp=datetime.datetime.now())
         
         if messwerte_indoor_pi.get("eCO2") > self.CO2_want:
             
@@ -145,13 +145,13 @@ class RoomCheck:
     #Temperature-Check
     #Temperature to high or to low?
     ################################################################
-    def check_temperature(self, temperature, room_temperature_want, temperature_difference, outdoor_temperature, window_open):
+    def check_temperature(self, temperature, room_temperature_want, temperature_difference, outdoor_temperature, window_open, room_id="all in room"):
         #check if room temperature too high
         if temperature > (room_temperature_want - temperature_difference):
             
             #if it is colder outside
             if outdoor_temperature < temperature:
-                window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Temperatur ist hoch)",timestamp=datetime.datetime.now())
+                window_notification = notification.Notification("SUGGESTION", room_id, "Bitte öffnen Sie das Fenster. (Temperatur ist hoch)",timestamp=datetime.datetime.now())
                 
                 if window_open == False:
                     self.NotificationWatcher.set_notification(window_notification)
@@ -185,7 +185,7 @@ class RoomCheck:
         outdoor_temperature = messwerte_building.get("outdoorTemperature")
         window_open = messwerte_room_sensors.get("windowsOpen")
 
-        self.check_temperature(temperature, room_temperature_want, self.temperature_difference, outdoor_temperature, window_open)
+        self.check_temperature(temperature, room_temperature_want, self.temperature_difference, outdoor_temperature, window_open, room_id=messwerte_room_sensors["id"])
 
 
     ################################################################
@@ -217,9 +217,10 @@ class RoomCheck:
     def main(self, messwerte_building,messwerte_room_sensors, messwerte_indoor_pi, messwerte_outdoor_pi, room_temperature_want):
         
         self.run_temperature_check(messwerte_room_sensors, messwerte_building,room_temperature_want)
+        self.check_heating_aircond(messwerte_room_sensors)
 
         if messwerte_indoor_pi:
-            self.run_CO2(messwerte_indoor_pi)
+            self.run_CO2(messwerte_indoor_pi, room_id=messwerte_room_sensors["id"])
              
 
             if messwerte_outdoor_pi:

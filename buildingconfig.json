@@ -1,6 +1,6 @@
 {
 	"tempDiff": 2,
-	"CO2_want": 300,
+	"CO2_want": 430,
 	"CO2_warn": 1400,
 	"humidity_want": 50,
 	"VOC_want": 150,
@@ -17,7 +17,7 @@
 	"preferred_temperature": 
 	{
 		"A":20.0,
-		"B":23.0,
+		"B":0,
 		"C":20.0,
 		"D":20.0,
 		"E":20.0,
