@@ -99,8 +99,13 @@ class RoomCheck:
         else:
             self.NotificationWatcher.reset_notification(CO2_indoor_notification)
 
+        window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Der CO2-Wert ist niedrig)",timestamp=datetime.datetime.now())
         if messwerte_indoor_pi.get("eCO2") > self.CO2_want:
-            self.send_open_window()
+            
+            self.NotificationWatcher.set_notification(window_notification)
+
+        else:
+            self.NotificationWatcher.set_notification(window_notification)
 
 
     ################################################################
@@ -115,14 +120,23 @@ class RoomCheck:
         
         #if humidity is too high
         if humidity_inside > humidity_inside + 10.0:
-
+            window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Luftfeuchtigkeit zu hoch)",timestamp=datetime.datetime.now())
             if humidity_outdoor < humidity_inside:
-                self.send_open_window()
+                
+                self.NotificationWatcher.set_notification(window_notification)
+
+            else:
+                self.NotificationWatcher.reset_notification(window_notification)
+
         
         #if humidity is too low
         elif humidity_inside < humidity_inside - 10.0:
+            window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Luftfeuchtigkeit zu niedrig)",timestamp=datetime.datetime.now())
             if humidity_outdoor > humidity_inside:
-                self.send_open_window()
+                self.NotificationWatcher.set_notification(window_notification)
+
+            else:
+                self.NotificationWatcher.reset_notification(window_notification)
 
 
 
@@ -136,9 +150,14 @@ class RoomCheck:
             
             #if it is colder outside
             if outdoor_temperature < temperature:
+                window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Temperatur ist hoch)",timestamp=datetime.datetime.now())
                 
                 if window_open == False:
-                    self.send_open_window()
+                    self.NotificationWatcher.set_notification(window_notification)
+
+                else:
+                    self.NotificationWatcher.reset_notification(window_notification)
+                    
             
             else:
                 #send_run_air_conditioning()
@@ -148,8 +167,13 @@ class RoomCheck:
         elif temperature < (room_temperature_want + temperature_difference):
             #if it is warmer outside
             if outdoor_temperature > temperature:
+                window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Temperatur ist niedrig)",timestamp=datetime.datetime.now())
+                
                 if window_open == False:
-                    self.send_open_window()
+                    self.NotificationWatcher.set_notification(window_notification)
+
+                else:
+                    self.NotificationWatcher.reset_notification(window_notification)
             
             else:
             #send_run_heating()
