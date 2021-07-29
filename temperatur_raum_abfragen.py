@@ -41,7 +41,7 @@ class RoomCheck:
 
     def send_temperature_indoor_alarm(self):
         print("Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.")
-        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
+        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude."),timestamp=datetime.datetime.now())
         self.NotificationWatcher.set_notification(temperature_indoor_notification)
 
     ################################################################
@@ -99,7 +99,8 @@ class RoomCheck:
         else:
             self.NotificationWatcher.reset_notification(CO2_indoor_notification)
 
-        window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Der CO2-Wert ist niedrig)",timestamp=datetime.datetime.now())
+        window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (Der CO2-Wert ist hoch)",timestamp=datetime.datetime.now())
+        
         if messwerte_indoor_pi.get("eCO2") > self.CO2_want:
             
             self.NotificationWatcher.set_notification(window_notification)
@@ -187,6 +188,11 @@ class RoomCheck:
         self.check_temperature(temperature, room_temperature_want, self.temperature_difference, outdoor_temperature, window_open)
 
 
+    ################################################################
+    #Heizung und Klimaanlage
+    #Temperature to high or to low?
+    ################################################################
+
 
 
     ################################################################
@@ -200,7 +206,13 @@ class RoomCheck:
 
         if messwerte_indoor_pi:
             self.run_CO2(messwerte_indoor_pi)
+             
 
             if messwerte_outdoor_pi:
                 self.run_humidity(messwerte_indoor_pi,messwerte_outdoor_pi)
+                self.check_inside_TVOC(messwerte_indoor_pi, messwerte_outdoor_pi)
+
+        if messwerte_outdoor_pi:
+            self.check_outside_TVOC(messwerte_outdoor_pi)
+
 
