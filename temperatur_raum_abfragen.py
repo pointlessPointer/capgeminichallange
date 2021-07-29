@@ -190,8 +190,22 @@ class RoomCheck:
 
     ################################################################
     #Heizung und Klimaanlage
-    #Temperature to high or to low?
     ################################################################
+
+    def check_heating_aircond(self,messwerte_room_sensors):
+        window_notification = notification.Notification("WARNING", "all in room", "Heizung und Klimaanlage laufen beide!",timestamp=datetime.datetime.now())
+        if messwerte_room_sensors.get("heaterRunning"):
+            if messwerte_room_sensors.get("airConditioningRunning"):
+                self.NotificationWatcher.set_notification(window_notification)
+        
+        if not messwerte_room_sensors.get("heaterRunning"):
+            if not messwerte_room_sensors.get("airConditioningRunning"):
+                self.NotificationWatcher.reset_notification(window_notification)
+            
+        
+
+        
+                
 
 
 
