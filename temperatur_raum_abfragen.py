@@ -1,3 +1,6 @@
+import notification
+import datetime
+
 class RoomCheck:
 
     def __init__(self, temperature_difference, room_temperature_want, CO2_want, CO2_danger, humidity_want, TVOC_good, TVOC_danger):
@@ -11,23 +14,35 @@ class RoomCheck:
         self.TVOC_good = TVOC_good
         self.TVOC_danger = TVOC_danger
 
+        self.NotificationWatcher = notification.NotificationWatcher()
+
     ################################################################
     #Notifications
     ################################################################
-    def send_open_window():
+    def send_open_window(self):
         print("Bitte öffnen Sie das Fenster.")
+        window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster.",timestamp=datetime.datetime.now())
+        self.NotificationWatcher.set_notification(window_notification)
 
-    def send_TVOC_outdoor_alarm():
+    def send_TVOC_outdoor_alarm(self):
         print("Bitte öffnen Sie keine Fenster.")
+        TVOC_oudoor_notification = notification.Notification("ALARM", "all in room", "Bitte öffnen Sie keine Fenster.",timestamp=datetime.datetime.now())
+        self.NotificationWatcher.set_notification(TVOC_oudoor_notification)
 
-    def send_TVOC_indoor_alarm():
+    def send_TVOC_indoor_alarm(self):
         print("Sehr hoher VOC-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.")
+        TVOC_indoor_notification = notification.Notification("ALARM", "all", "Sehr hoher VOC-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
+        self.NotificationWatcher.set_notification(TVOC_indoor_notification)
 
-    def send_CO2_indoor_alarm():
+    def send_CO2_indoor_alarm(self):
         print("Sehr hoher CO2-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.")
+        CO2_indoor_notification = notification.Notification("ALARM", "all", "Sehr hoher CO2-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
+        self.NotificationWatcher.set_notification(CO2_indoor_notification)
 
-    def send_temperature_indoor_alarm():
+    def send_temperature_indoor_alarm(self):
         print("Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude.")
+        temperature_indoor_notification = notification.Notification("ALARM", "all", "Sehr hohe Temperatur im Raum, bitte verlassen Sie umgehend das Gebäude."),timestamp=datetime.datetime.now())
+        self.NotificationWatcher.set_notification(temperature_indoor_notification)
 
     ################################################################
     #TVOC check
@@ -36,17 +51,35 @@ class RoomCheck:
     #Das Umweltbundesamt gibt Empfehlungen für das Vorkommen von Flüchtigen Organischen Verbindungen (VOCs) von hygienisch unbedenklich (unter 1 mg/m³ – unter 150 ppb) über hygienisch auffällig (zwischen 1 bis 3 mg/m³ – 150 bis 1300 ppb) bis hin zu hygienisch inakzeptabel (über 10 mg/m³ – über 1500 bis 4000 ppb)
 
     def check_outside_TVOC(self,messwerte_outdoor_pi):
-        if messwerte_outdoor_pi.get("TVOC") > self.TVOC_danger:
-            self.send_TVOC_outdoor_alarm()
+        TVOC_oudoor_notification = notification.Notification("ALARM", "all in room", "Bitte öffnen Sie keine Fenster. (Hoher VOC-Wert)",timestamp=datetime.datetime.now())
+
+        if messwerte_outdoor_pi.get("TVOC") > self.TVOC_danger:  
+            self.NotificationWatcher.set_notification(TVOC_oudoor_notification)
+
+        else:  
+            self.NotificationWatcher.reset_notification(TVOC_oudoor_notification)
 
 
     def check_inside_TVOC(self, messwerte_indoor_pi, messwerte_outdoor_pi):
+        TVOC_indoor_notification = notification.Notification("ALARM", "all", "Sehr hoher VOC-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
+        window_notification = notification.Notification("SUGGESTION", "all in room", "Bitte öffnen Sie das Fenster. (VOC-Wert zu hoch)",timestamp=datetime.datetime.now())
+
         if messwerte_indoor_pi.get("TVOC") > self.TVOC_danger:
-            self.send_TVOC_indoor_alarm()
+            
+            self.NotificationWatcher.set_notification(TVOC_indoor_notification)
         
-        elif messwerte_indoor_pi.get("TVOC") > self.TVOC_good:
+        else:
+            self.NotificationWatcher.reset_notification(TVOC_indoor_notification)
+        
+        if messwerte_indoor_pi.get("TVOC") > self.TVOC_good:
+           
+
             if messwerte_outdoor_pi.get("TVOC") < messwerte_indoor_pi.get("TVOC"):
-                self.send_open_window()
+                
+                self.NotificationWatcher.set_notification(window_notification)
+            
+        else:
+            self.NotificationWatcher.reset_notification(window_notification)
 
 
     ################################################################
@@ -57,8 +90,14 @@ class RoomCheck:
 
     def run_CO2(self, messwerte_indoor_pi):
 
+        CO2_indoor_notification = notification.Notification("ALARM", "all", "Sehr hoher CO2-Wert im Raum, bitte verlassen Sie umgehend das Gebäude.",timestamp=datetime.datetime.now())
+        
         if messwerte_indoor_pi.get("eCO2") > self.CO2_danger:
-            self.send_CO2_indoor_alarm()
+            
+            self.NotificationWatcher.set_notification(CO2_indoor_notification)
+
+        else:
+            self.NotificationWatcher.reset_notification(CO2_indoor_notification)
 
         if messwerte_indoor_pi.get("eCO2") > self.CO2_want:
             self.send_open_window()
@@ -141,7 +180,3 @@ class RoomCheck:
             if messwerte_outdoor_pi:
                 self.run_humidity(messwerte_indoor_pi,messwerte_outdoor_pi)
 
-
-    if __name__ == "__main__":
-        # execute only if run as a script
-        main()
