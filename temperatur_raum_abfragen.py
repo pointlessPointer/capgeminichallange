@@ -3,11 +3,11 @@ import datetime
 
 class RoomCheck:
 
-    def __init__(self, temperature_difference, room_temperature_want, CO2_want, CO2_danger, humidity_want, TVOC_good, TVOC_danger):
+    def __init__(self, temperature_difference, CO2_want, CO2_danger, humidity_want, TVOC_good, TVOC_danger):
         # Ab welchem Unterschied wird eine Notification rausgegeben?
         self.temperature_difference = temperature_difference
 
-        self.room_temperature_want = room_temperature_want
+
         self.CO2_want = CO2_want
         self.CO2_danger = CO2_danger
         self.humidity_want = humidity_want
@@ -155,12 +155,12 @@ class RoomCheck:
             #send_run_heating()
                 print("run heating")
 
-    def run_temperature_check(self, messwerte_room_sensors, messwerte_building):
+    def run_temperature_check(self, messwerte_room_sensors, messwerte_building, room_temperature_want):
         temperature = messwerte_room_sensors.get("temperature")
         outdoor_temperature = messwerte_building.get("outdoorTemperature")
         window_open = messwerte_room_sensors.get("windowsOpen")
 
-        self.check_temperature(temperature, self.room_temperature_want, self.temperature_difference, outdoor_temperature, window_open)
+        self.check_temperature(temperature, room_temperature_want, self.temperature_difference, outdoor_temperature, window_open)
 
 
 
@@ -170,9 +170,9 @@ class RoomCheck:
     ################################################################
 
 
-    def main(self, messwerte_building,messwerte_room_sensors, messwerte_indoor_pi, messwerte_outdoor_pi):
+    def main(self, messwerte_building,messwerte_room_sensors, messwerte_indoor_pi, messwerte_outdoor_pi, room_temperature_want):
         
-        self.run_temperature_check(messwerte_room_sensors, messwerte_building)
+        self.run_temperature_check(messwerte_room_sensors, messwerte_building,room_temperature_want)
 
         if messwerte_indoor_pi:
             self.run_CO2(messwerte_indoor_pi)
